@@ -2,30 +2,170 @@
     ViewBag.Title = "Home Page";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+<div class="row">
+  <div class="col-12">
+    <div class="d-flex justify-content-center">
+      <div class="text-center">
+        <h1>Word to PDF</h1>
+        <h3>Convert your DOC to PDF online</h3>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="row">
+  <div class="col-md-4">
+    @using (Html.BeginForm(
+      "Index",
+      "Home",
+      FormMethod.Post,
+      new
+      {
+        enctype = "multipart/form-data"
+      }))
+    {
+      if(ViewBag.Message != null)
+      {
+        <div class="alert alert-warning">
+          @ViewBag.Message
+        </div>
+      }
+      <div class="form-group">
+        <label class="cursor-pointer" for="fromFormat">From</label>
+        <select class="form-control" id="fromFormat" name="fromFormat" required>
+          <option value="">Select from format</option>
+          <option selected value="docx">docx</option>
+          <option value="pdf">pdf</option>
+        </select>
+        <p class="help-block hidden"></p>
+      </div>
+      <div class="form-group">
+        <label class="cursor-pointer" for="toFormat">To</label>
+        <select class="form-control" id="toFormat" name="toFormat" required>
+          <option value="">Select to format</option>
+          <option value="pdf" selected>pdf</option>
+          <option value="docx">docx</option>
+        </select>
+        <p class="help-block hidden"></p>
+      </div>
+      <div class="form-group">
+        <label class="cursor-pointer" for="file">Select your file</label>
+        <div class="fallback">
+          <input type="file" name="file" id="file" accept=".docx, .doc, .pdf" class="form-control" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <button class="btn btn-primary ladda-button" data-style="expand-left"><span class="ladda-label">Convert</span></button>
+      </div>
+      <div class="alert-wrapper"></div>
+    }
+  </div>
+  <div class="col-md-8 result hidden">
+    <h3>Result</h3>
+    <p>
+      You can download your converted file here: 
+      <a href="https://example.com" target="_blank"></a>
+    </p>
+  </div>
+</div>
+
+<div class="row text-center">
     <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+      <h2>Quick and efficient processing</h2>
+      <p>
+        Directly upload your file into the toolbox above to convert your Microsoft Word document to PDF. The file size does not matter, nor is the need to register.
+      </p>
     </div>
     <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+      <h2>Your privacy is important to us</h2>
+      <p>
+        One hour after the conversion, your files will be deleted from our servers forever. If you want to know more please read our privacy policy below.
+      </p>
     </div>
     <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+      <h2>We support all platforms</h2>
+      <p>We don’t discriminate on the platform and convert Word docs to PDF whether you are using Windows, Mac or Linux.</p>
     </div>
 </div>
+
+@section scripts {
+  <script>
+    $('form').on('submit', function (e) {
+      e.preventDefault();
+
+      var formData = new FormData(),
+        fromFormat = $('#fromFormat').val(),
+        toFormat = $('#toFormat').val();
+      /* these validation might be not needed because of the required native html attribute */
+      if (fromFormat === "") {
+        $('#fromFormat').parent().addClass('has-error').find('.help-block').removeClass('hidden').html('From format is required');
+        return false; 
+      }
+      /* these validation might be not needed because of the required native html attribute  */
+      if (toFormat === "") {
+        $('#toFormat').parent().addClass('has-error').find('.help-block').removeClass('hidden').html('To format is required');
+        return false;
+      }
+      /* this validation is needed, though */
+      if (fromFormat === toFormat) {
+        $('#fromFormat').parent().addClass('has-error').find('.help-block').removeClass('hidden').html('The "from" and "to" file types are the same');
+        $('#toFormat').parent().addClass('has-error').find('.help-block').removeClass('hidden').html('The "from" and "to" file types are the same');
+        return false;
+      }
+
+      formData.append('File', $('#file')[0].files[0], $('#file')[0].files[0].name);
+      formData.append('StoreFile', 'true');
+
+      var l = Ladda.create($('.ladda-button')[0]);
+	 	  l.start();
+
+      $.ajax({
+        url: "https://v2.convertapi.com/convert/" + fromFormat + "/to/" + toFormat + "?Secret=dEjY8z5bewQOnzIV",
+        data: formData,
+        processData: false,
+        contentType: false,
+        method: 'POST',
+        beforeSend: function () {
+          $('form .alert-wrapper').html("");
+        },
+        complete: function () {
+          l.stop();
+        },
+        error: function (data) {
+          $('form .alert-wrapper').html("");
+          $('form .alert-wrapper').append(
+            "<div class='alert alert-danger'>"+
+            "That request was unsuccessful.If you selected DOCX to PDF, apparently that API endpoint does not exist. " +
+            "Please refer to " +
+            "<a href='https://www.convertapi.com/pdf-to-decompress' target='_blank'>" +
+            "https://www.convertapi.com/pdf-to-decompress" +
+            "</a> " +
+            "for further information." +
+            "</div>"
+          );
+          console.log(data);
+        },
+        success: function (data) {
+          $('.result').removeClass('hidden');
+          $('.result a').text(data.Files[0].FileName);
+          $('.result a').prop('href', data.Files[0].Url);
+          $('#file').val('');
+          hitAPIWhenDone();
+        }
+      });
+    });
+
+    var hitAPIWhenDone = function () {
+      $.ajax({
+        url: "http://imp.emailaccessonline.com/impression.do?event=CaseStudyFileConverted&source=%20RobertCaseStudy&traffic_source=RobertCaseStudy",
+        method: 'GET',
+        complete: function () {
+          console.log('Completed.');
+        },
+        success: function (data) {
+          console.log('Success', data);
+        }
+      });
+    }
+  </script>
+}

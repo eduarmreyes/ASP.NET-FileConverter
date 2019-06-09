@@ -16,9 +16,39 @@
     white-space: normal;
 }
 
+.d-flex {
+  display: flex;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.bg-white {
+  background: #fff;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.navbar-inverse {
+  background-color: rgb(108, 178, 235);
+  border-color: rgb(108, 178, 235);
+  color: #fcfcfc;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+  color: #fcfcfc;
+}
+
+.navbar-inverse .navbar-brand {
+  color: #fcfcfc;
+}
+
 /* Set width on the form input elements since they're 100% wide by default */
 input,
 select,
 textarea {
-    max-width: 280px;
+  max-width: 280px;
 }
