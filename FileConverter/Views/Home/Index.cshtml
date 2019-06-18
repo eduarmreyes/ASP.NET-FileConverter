@@ -36,6 +36,7 @@
           <option value="">Select from format</option>
           <option selected value="docx">docx</option>
           <option value="pdf">pdf</option>
+          <option value="txt">txt</option>
         </select>
         <p class="help-block hidden"></p>
       </div>
@@ -44,14 +45,15 @@
         <select class="form-control" id="toFormat" name="toFormat" required>
           <option value="">Select to format</option>
           <option value="pdf" selected>pdf</option>
-          <option value="docx">docx</option>
+          <option value="jpg">jpg</option>
+          <option value="png">png</option>
         </select>
         <p class="help-block hidden"></p>
       </div>
       <div class="form-group">
         <label class="cursor-pointer" for="file">Select your file</label>
         <div class="fallback">
-          <input type="file" name="file" id="file" accept=".docx, .doc, .pdf" class="form-control" required />
+          <input type="file" name="file" id="file" accept=".docx, .doc, .pdf, .txt" class="form-control" required />
         </div>
       </div>
       <div class="form-group">
@@ -96,17 +98,17 @@
       var formData = new FormData(),
         fromFormat = $('#fromFormat').val(),
         toFormat = $('#toFormat').val();
-      /* these validation might be not needed because of the required native html attribute */
+      // these validation might be not needed because of the required native html attribute
       if (fromFormat === "") {
         $('#fromFormat').parent().addClass('has-error').find('.help-block').removeClass('hidden').html('From format is required');
         return false; 
       }
-      /* these validation might be not needed because of the required native html attribute  */
+      // these validation might be not needed because of the required native html attribute
       if (toFormat === "") {
         $('#toFormat').parent().addClass('has-error').find('.help-block').removeClass('hidden').html('To format is required');
         return false;
       }
-      /* this validation is needed, though */
+      // this validation is needed, though
       if (fromFormat === toFormat) {
         $('#fromFormat').parent().addClass('has-error').find('.help-block').removeClass('hidden').html('The "from" and "to" file types are the same');
         $('#toFormat').parent().addClass('has-error').find('.help-block').removeClass('hidden').html('The "from" and "to" file types are the same');

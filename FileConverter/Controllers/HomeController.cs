@@ -5,6 +5,8 @@ using System.Web;
 using System.Web.Mvc;
 using ConvertApiDotNet;
 using System.IO;
+using System.Net.Http;
+using System.Collections.Generic;
 using ConvertApiDotNet.Model;
 
 namespace FileConverter.Controllers
@@ -62,6 +64,36 @@ namespace FileConverter.Controllers
         file.SaveAs(path);
 
         /*
+        
+        string url = "https://v2.convertapi.com/convert/doc/to/pdf?Secret=" + Properties.Settings.Default.CONVERT_API_SECRET + "&File=" + file.InputStream;
+        var handler = new HttpClientHandler();
+
+        handler.UseCookies = false;
+
+        using (var httpClient = new HttpClient(handler))
+        {
+          using (var request = new HttpRequestMessage(new HttpMethod("POST"), url))
+          {
+            request.Headers.TryAddWithoutValidation("Referer", "https://v2.convertapi.com/");
+
+            request.Content = new ByteArrayContent(System.IO.File.ReadAllBytes(path));
+
+            var response = httpClient.SendAsync(request);
+          }
+        }
+        */
+
+        /*
+        string url = "https://v2.convertapi.com/convert/doc/to/pdf?Secret=" + Properties.Settings.Default.CONVERT_API_SECRET + "&File=" + file.InputStream;
+        var client = new HttpClient();
+        var requestContent = new FormUrlEncodedContent(new []
+        {
+          new KeyValuePair
+        })
+        HttpResponseMessage response = await client.PostAsync(
+          url);
+        */
+        /*
         var response = convertApi.ConvertAsync(fromFormat, toFormat,
           new ConvertApiFileParam(@path)
         );
@@ -70,7 +102,6 @@ namespace FileConverter.Controllers
 
         result.SaveFile(Server.MapPath("~/Files"));
         */
-
       }
       catch (Exception ex)
       {
